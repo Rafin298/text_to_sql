@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'data_loader',
+    'text2sql',
     'rest_framework',
 ]
 

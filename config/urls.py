@@ -20,4 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('data_loader.urls')),
+    path('', include('text2sql.urls')),
 ]

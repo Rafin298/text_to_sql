@@ -6,12 +6,10 @@ import time
 import datetime
 from data_loader import models
 
-# Helper for parsing dates robustly
 def parse_date_safe(val):
     if pd.isna(val):
         return None
     try:
-        # pandas may already parse; try python-dateutil via pandas
         return pd.to_datetime(val, errors='coerce')
     except Exception:
         return None
@@ -52,7 +50,6 @@ class CSVLoader:
         path = os.path.join(self.csv_root, filename)
         if not os.path.exists(path):
             raise FileNotFoundError(f"CSV not found: {path}")
-        # let pandas infer dtypes but keep as string where appropriate
         df = pd.read_csv(path, dtype=str, encoding="ISO-8859-1",keep_default_na=False, na_values=['', 'NULL', 'NaN'])
         return df
 
@@ -93,7 +90,7 @@ class CSVLoader:
             report['processed']['order_details'] = len(order_details_df)
             report['null_counts']['order_details'] = self._count_nulls(order_details_df)
 
-            # Now validate & insert in DB using transactions and bulk ops
+            # validate & insert in DB using transactions and bulk ops
             self._insert_categories(categories_df, report)
             self._insert_customers(customers_df, report)
             self._insert_employees(employees_df, report)
@@ -281,7 +278,7 @@ class CSVLoader:
                 if cust_raw:
                     cust_obj = models.Customer.objects.filter(pk=cust_raw).first()
                     if not cust_obj and self.create_missing_parents:
-                        # create a minimal customer (not recommended without human check)
+                        # create a minimal customer
                         cust_obj = models.Customer.objects.create(customerID=cust_raw, companyName=f'Auto-{cust_raw}')
                     if not cust_obj:
                         ref_violations += 1
