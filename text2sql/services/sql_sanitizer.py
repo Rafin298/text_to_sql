@@ -9,6 +9,7 @@ Rules enforced:
  - Enforce max rows by injecting LIMIT if none present.
 """
 import re
+from django.db import connection
 
 BLOCKED_TOKENS = [
     r"\bINSERT\b", r"\bUPDATE\b", r"\bDELETE\b", r"\bDROP\b",
@@ -64,3 +65,11 @@ def basic_sanitize_and_enforce(sql: str, max_rows: int = 1000) -> str:
         cleaned = f"{cleaned.rstrip()} LIMIT {max_rows}"
 
     return cleaned
+
+
+def execute_sql(sql: str, row_limit=1000):
+    sql = basic_sanitize_and_enforce(sql)
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        result = cursor.fetchmany(row_limit)
+    return result
