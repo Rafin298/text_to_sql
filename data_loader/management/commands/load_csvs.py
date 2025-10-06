@@ -160,7 +160,8 @@ class CSVLoader:
         """
         Two-pass insert: create employees without reportsTo, then update reportsTo FK to existing records.
         """
-        created = 0; errors = 0
+        created = 0 
+        errors = 0
         temp_relations = []
         objs = []
         for _, row in df.iterrows():
